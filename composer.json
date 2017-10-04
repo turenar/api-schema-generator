@@ -3,12 +3,10 @@
     "type": "library",
     "require": {
         "php": ">7.0",
-        "ext-json": "^1.4"
-    },
-    "require-dev": {
+        "ext-json": "^1.4",
         "ext-yaml": "^2.0"
     },
-    "autoload-dev": {
+    "autoload": {
         "psr-4": {
             "Turenar\\ApiSchema\\": "src/"
         }
