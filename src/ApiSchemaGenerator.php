@@ -13,7 +13,12 @@ class ApiSchemaGenerator implements IncludeResolver
 	{
 	}
 
-	public function convertFile($infile, $outfile)
+	public function generateSchema($spec): array
+	{
+		return (new Endpoint(new SpecView($this, $spec, '(null)', '')))->getSchema();
+	}
+
+	public function generateFile($infile, $outfile)
 	{
 		$yaml = yaml_parse_file($infile);
 		if ($yaml === false) {
