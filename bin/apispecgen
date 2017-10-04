@@ -15,4 +15,5 @@ use Symfony\Component\Console\Application;
 
 $app = new Application('ApiSpecGen');
 $app->add(new \Turenar\ApiSchema\Command\GenerateCommand());
+$app->setDefaultCommand('gen');
 $app->run();
