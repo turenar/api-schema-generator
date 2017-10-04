@@ -1,0 +1,23 @@
+{
+    "name": "turenar/api-schema-generator",
+    "type": "library",
+    "require": {
+        "php": ">7.0",
+        "ext-json": "^1.4"
+    },
+    "require-dev": {
+        "ext-yaml": "^2.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Turenar\\ApiSchema\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Turenar",
+            "email": "snswinhaiku.lo@gmail.com"
+        }
+    ]
+}
