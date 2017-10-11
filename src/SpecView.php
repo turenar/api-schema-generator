@@ -132,6 +132,7 @@ class SpecView implements \IteratorAggregate
 				}
 				$arr = array_replace_recursive($arr, $yaml[$name]);
 			}
+			unset($arr['+include']);
 		}
 		return $arr;
 	}
