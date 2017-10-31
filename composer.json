@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">7.0",
+        "php": ">= 7.0",
         "ext-json": "^1.4",
         "ext-yaml": "^2.0",
         "symfony/console": "^3.3"
