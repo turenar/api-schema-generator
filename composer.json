@@ -1,6 +1,13 @@
 {
     "name": "turenar/api-schema-generator",
     "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Turenar",
+            "email": "snswinhaiku.lo@gmail.com"
+        }
+    ],
     "require": {
         "php": ">7.0",
         "ext-json": "^1.4",
@@ -12,14 +19,12 @@
             "Turenar\\ApiSchema\\": "src/"
         }
     },
-    "license": "MIT",
+    "autoload-dev": {
+        "psr-4": {
+            "Turenar\\ApiSchema\\Test": "tests"
+        }
+    },
     "bin": [
         "bin/apispecgen"
-    ],
-    "authors": [
-        {
-            "name": "Turenar",
-            "email": "snswinhaiku.lo@gmail.com"
-        }
     ]
 }
