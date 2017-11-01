@@ -15,9 +15,18 @@ class ParserTest extends TestCase
 	public function filesProvider()
 	{
 		$files = [];
-		foreach (new \DirectoryIterator(self::FILES_DIR) as $test_case) {
-			if (!$test_case->isDot() && $test_case->isDir()) {
-				$files[] = [$test_case->getFilename()];
+		foreach (new \DirectoryIterator(self::FILES_DIR) as $test_spec_dir) {
+			if (!$test_spec_dir->isDot() && $test_spec_dir->isDir()) {
+				$yaml_filename = $test_spec_dir->getRealPath() . '/spec.yaml';
+				$test_spec = yaml_parse_file($yaml_filename);
+				if (empty($test_spec)) {
+					throw new \Exception("$yaml_filename is not yaml?");
+				}
+
+				$test_cases = json_decode(file_get_contents($test_spec_dir->getRealPath() . '/tests.json'), true);
+				foreach ($test_cases['tests'] as $index => $_) {
+					$files[] = [$test_spec_dir->getFilename(), $index];
+				}
 			}
 		}
 		return $files;
@@ -26,26 +35,25 @@ class ParserTest extends TestCase
 	/**
 	 * @dataProvider filesProvider
 	 */
-	public function testParse($dir)
+	public function testParse($dir, $test_index)
 	{
 		$generator = new ApiSchemaGenerator();
 		$base_dir = self::FILES_DIR . '/' . $dir;
+
 		$test_spec = yaml_parse_file($base_dir . '/spec.yaml');
-		$this->assertNotEmpty($test_spec, 'test specification is not valid');
 		$schema = $generator->generateSchema($test_spec);
 		$this->assertNotEmpty($schema['input'] ?? null, 'test specification is not valid');
 		$this->assertNotEmpty($schema['output'] ?? null, 'test specification is not valid');
 
 		$test_case = json_decode(file_get_contents($base_dir . '/tests.json'), false);
-		foreach ($test_case->tests as $test) {
-			$this->assertObjectHasAttribute('expected', $test);
-			$expected = $this->parseExpectation($test->expected);
-			if (isset($test->input)) {
-				$this->checkParse($schema['input'], $test->input, $expected);
-			}
-			if (isset($test->output)) {
-				$this->checkParse($schema['output'], $test->output, $expected);
-			}
+		$test = $test_case->tests[$test_index];
+		$this->assertObjectHasAttribute('expected', $test);
+		$expected = $this->parseExpectation($test->expected);
+		if (isset($test->input)) {
+			$this->checkParse($schema['input'], $test->input, $expected);
+		}
+		if (isset($test->output)) {
+			$this->checkParse($schema['output'], $test->output, $expected);
 		}
 	}
 
