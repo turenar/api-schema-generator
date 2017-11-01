@@ -1,0 +1,63 @@
+{
+  "tests": [
+    {
+      "expected": "pass",
+      "input": {
+        "foo": {
+          "bar": "hoge"
+        }
+      },
+      "output": {
+        "foo": {
+          "bar": "hoge"
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": {
+          "bar": null
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": {
+          "bar": 1
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": {
+          "bar": true
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": {
+          "not_exist_in_spec": "hoge"
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "not_exist_in_spec": 1
+      }
+    },
+    {
+      "expected": "fail",
+      "output": {
+        "foo": {
+          "bar": 1
+        }
+      }
+    }
+  ]
+}
