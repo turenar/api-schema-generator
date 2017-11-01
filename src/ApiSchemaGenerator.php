@@ -9,13 +9,20 @@ use Turenar\ApiSchema\Tree\Endpoint;
 class ApiSchemaGenerator implements IncludeResolver
 {
 	protected $includes = [];
+	protected $base_spec_file;
+
 	public function __construct()
 	{
 	}
 
+	public function setBaseSpecFile(string $filename)
+	{
+		$this->base_spec_file = $filename;
+	}
+
 	public function generateSchema($spec): array
 	{
-		return (new Endpoint(new SpecView($this, $spec, '(null)', '')))->getSchema();
+		return (new Endpoint(new SpecView($this, null, $spec, '(null)', '')))->getSchema();
 	}
 
 	public function generateFile($infile, $outfile)
@@ -27,7 +34,7 @@ class ApiSchemaGenerator implements IncludeResolver
 		if (!(isset($yaml['input']) && isset($yaml['output']))) {
 			throw new \Exception("$infile: required root object is not found");
 		}
-		$schema = (new Endpoint(new SpecView($this, $yaml, $infile, '')))->getSchema();
+		$schema = (new Endpoint(new SpecView($this, null, $yaml, $infile, '')))->getSchema();
 		file_put_contents($outfile, json_encode($schema));
 	}
 
@@ -36,12 +43,18 @@ class ApiSchemaGenerator implements IncludeResolver
 		$this->includes[] = $dir;
 	}
 
-	public function resolve(string $include_filename)
+	public function resolve(SpecView $parent, string $name, string $include_filename): ?SpecView
 	{
 		foreach ($this->includes as $include_dir) {
 			$path = $include_dir . '/' . $include_filename;
 			if (file_exists($path)) {
-				return $path;
+				$yaml = yaml_parse_file($path);
+				if ($yaml === false) {
+					throw new SpecException($parent, $parent->newChildPath($name), 'yaml parse failed');
+				} else if (!is_array($yaml)) {
+					throw new SpecException($parent, $parent->newChildPath($name), 'loaded yaml is not array');
+				}
+				return new SpecView($parent->getResolver(), $name, $yaml, $path, '');
 			}
 		}
 		return null;

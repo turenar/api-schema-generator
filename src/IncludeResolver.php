@@ -7,8 +7,10 @@ namespace Turenar\ApiSchema;
 interface IncludeResolver
 {
 	/**
+	 * @param SpecView $parent
+	 * @param string $name
 	 * @param string $include_filename filename
-	 * @return string|null
+	 * @return null|SpecView
 	 */
-	public function resolve(string $include_filename);
+	public function resolve(SpecView $parent, string $name, string $include_filename): ?SpecView;
 }

@@ -14,23 +14,47 @@ class SpecView implements \IteratorAggregate
 	private $filename;
 	/** @var string */
 	private $ref_path;
+	/** @var SpecView|null */
+	private $included_by;
+	/** @var SpecView[] */
+	private $included_fields = [];
 
-	public function __construct(IncludeResolver $resolver, array $arr, string $filename, string $ref_path)
-	{
+
+	public function __construct(
+		IncludeResolver $resolver,
+		?string $name,
+		array $arr,
+		string $filename,
+		string $ref_path,
+		SpecView $parent = null
+	) {
 		$this->resolver = $resolver;
-		$this->arr = $arr;
 		$this->filename = $filename;
 		$this->ref_path = $ref_path;
+		$this->included_by = $parent === null ? null : $parent->included_by;
+		foreach ($arr as $field_name => $value) {
+			if (is_array($value)) {
+				$arr[$field_name] = new SpecView($resolver, $field_name, $value, $filename,
+					$this->newChildPath($field_name), $this);
+			}
+		}
+		$this->arr = $arr;
+		$this->resolveInclude($name);
 	}
 
 	public function getChild($name): SpecView
 	{
 		$child = $this->getField($name);
-		if (!is_array($child)) {
+		if ($child instanceof SpecView) {
+			return $child;
+		} else {
 			throw new SpecException($this, $this->newChildPath($name), 'not array');
 		}
+	}
 
-		return $this->newSpecView($name, $child);
+	public function hasChild($name): bool
+	{
+		return $this->getField($name) instanceof SpecView;
 	}
 
 	public function requireField($field_name)
@@ -57,11 +81,7 @@ class SpecView implements \IteratorAggregate
 	public function getIterator()
 	{
 		foreach ($this->arr as $key => $value) {
-			if (is_array($value)) {
-				yield $key => $this->newSpecView($key, $value);
-			} else {
-				yield $key => $value;
-			}
+			yield $key => $value;
 		}
 	}
 
@@ -93,7 +113,7 @@ class SpecView implements \IteratorAggregate
 	 * @param string $key
 	 * @return string
 	 */
-	protected function newChildPath($key): string
+	public function newChildPath($key): string
 	{
 		if (is_numeric($key)) {
 			$new_path = $this->ref_path . '[' . $key . ']';
@@ -103,37 +123,57 @@ class SpecView implements \IteratorAggregate
 		return $new_path;
 	}
 
-	protected function newSpecView($name, $child): SpecView
+	protected function resolveInclude(?string $name)
 	{
-		return new SpecView($this->resolver, $this->resolveInclude($child, $name), $this->filename,
-			$this->newChildPath($name));
-	}
-
-	protected function resolveInclude(array $arr, string $name)
-	{
-		if (isset($arr['+include'])) {
-			$includes = $arr['+include'];
+		if (isset($this->arr['+include'])) {
+			$includes = $this->arr['+include'];
 			if (!is_array($includes)) {
 				$includes = [$includes];
 			}
 			foreach ($includes as $include) {
-				$inclusion_file = $this->resolver->resolve($include);
-				if ($inclusion_file === null) {
+				$resolved_spec = $this->resolver->resolve($this, $name, $include);
+				if ($resolved_spec === null) {
 					$reason = sprintf('include file not found (%s)', $include);
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
-				$yaml = yaml_parse_file($inclusion_file);
-				if ($yaml === false) {
-					throw new SpecException($this, $this->newChildPath('+include'), 'parse failed');
-				}
-				if (!array_key_exists($name, $yaml)) {
-					$reason = sprintf('included file(%s) has no "%s"', $inclusion_file, $name);
+				$resolved_spec->included_by = $this;
+				if ($resolved_spec->hasChild($name)) {
+					$reason = sprintf('included file(%s) has no "%s"', $resolved_spec->getFilename(), $name);
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
-				$arr = array_replace_recursive($arr, $yaml[$name]);
+				$this->merge($resolved_spec->getChild($name));
+			}
+		}
+	}
+
+	protected function getIncludedBy($field = null)
+	{
+		if ($field !== null || isset($this->included_fields[$field])) {
+			return $this->included_fields[$field];
+		} else {
+			return $this;
+		}
+	}
+
+	protected function merge(SpecView $another)
+	{
+		foreach ($another->arr as $field_name => $new_value) {
+			if ($new_value instanceof SpecView) {
+				$current_value = $this->arr[$field_name] ?? null;
+				if ($current_value instanceof SpecView) {
+					$current_value->merge($new_value);
+				} else if ($current_value === null) {
+					$this->arr[$field_name] = $new_value;
+					$this->included_fields[$field_name] = $another->getIncludedBy($field_name);
+				} else {
+					// FIXME more friendly message
+					throw new SpecException($this, $this->newChildPath($field_name), 'merge failed');
+				}
+			} else {
+				$this->arr[$field_name] = $new_value;
+				$this->included_fields[$field_name] = $another->getIncludedBy($field_name);
 			}
 			unset($arr['+include']);
 		}
-		return $arr;
 	}
 }
