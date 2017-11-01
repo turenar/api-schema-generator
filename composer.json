@@ -14,6 +14,10 @@
         "ext-yaml": "^2.0",
         "symfony/console": "^3.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": ">= 5.4.0",
+        "justinrainbow/json-schema": "^5.2"
+    },
     "autoload": {
         "psr-4": {
             "Turenar\\ApiSchema\\": "src/"
@@ -21,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Turenar\\ApiSchema\\Test": "tests"
+            "Turenar\\ApiSchema\\Test\\": "tests"
         }
     },
     "bin": [

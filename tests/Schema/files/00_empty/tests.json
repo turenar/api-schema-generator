@@ -1,0 +1,25 @@
+{
+  "tests": [
+    {
+      "expected": "pass",
+      "input": {},
+      "output": {}
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "hoge": {
+          "fuga": "piyo"
+        }
+      }
+    },
+    {
+      "expected": "fail",
+      "output": {
+        "hoge": {
+          "fuga": "piyo"
+        }
+      }
+    }
+  ]
+}
