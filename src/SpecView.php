@@ -137,7 +137,7 @@ class SpecView implements \IteratorAggregate
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
 				$resolved_spec->included_by = $this;
-				if ($resolved_spec->hasChild($name)) {
+				if (!$resolved_spec->hasChild($name)) {
 					$reason = sprintf('included file(%s) has no "%s"', $resolved_spec->getFilename(), $name);
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
