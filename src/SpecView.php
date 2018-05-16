@@ -148,7 +148,7 @@ class SpecView implements \IteratorAggregate
 
 	protected function getIncludedBy($field = null)
 	{
-		if ($field !== null || isset($this->included_fields[$field])) {
+		if ($field !== null && isset($this->included_fields[$field])) {
 			return $this->included_fields[$field];
 		} else {
 			return $this;
