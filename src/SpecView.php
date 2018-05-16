@@ -173,7 +173,7 @@ class SpecView implements \IteratorAggregate
 				$this->arr[$field_name] = $new_value;
 				$this->included_fields[$field_name] = $another->getIncludedBy($field_name);
 			}
-			unset($arr['+include']);
+			unset($this->arr['+include']);
 		}
 	}
 }
