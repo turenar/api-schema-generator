@@ -18,9 +18,9 @@ class ValueCollation implements TreeElement
 
 	public function generateFieldSchema($type)
 	{
-		$nullable = substr($type, -1) === '?';
+		$nullable = substr($type, 0, 1) === '?';
 		if ($nullable) {
-			$type = substr($type, 0, -1);
+			$type = substr($type, 1);
 		}
 		$schema = $this->generateBaseType($type);
 		if ($nullable) {
@@ -54,6 +54,7 @@ class ValueCollation implements TreeElement
 				throw new \Exception("Unknown spec type: $type");
 		}
 	}
+
 	public function getSchema()
 	{
 		$schema = $this->generateFieldSchema($this->spec->requireField('type'));
