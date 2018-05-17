@@ -7,6 +7,7 @@ namespace Turenar\ApiSchema\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Turenar\ApiSchema\ApiSchemaGenerator;
 
@@ -20,8 +21,8 @@ class GenerateCommand extends Command
 			->setHelp('')// TODO
 			->addArgument('src', InputArgument::OPTIONAL, 'source directory', getcwd() . '/api-spec')
 			->addArgument('dst', InputArgument::OPTIONAL, 'destination directory', getcwd() . '/generated-api-schema')
-			->addOption('base', 'b', InputArgument::REQUIRED)
-			->addOption('incdir', 'I', InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+			->addOption('base', 'b', InputOption::VALUE_REQUIRED)
+			->addOption('incdir', 'I', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'additional include directory');
 	}
 
