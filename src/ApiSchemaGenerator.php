@@ -18,6 +18,9 @@ class ApiSchemaGenerator implements IncludeResolver
 
 	protected function loadYaml($infile)
 	{
+		if (!file_exists($infile)) {
+			throw new \Exception("$infile is not found");
+		}
 		$yaml = yaml_parse_file($infile);
 		if ($yaml === false) {
 			throw new \Exception("$infile is not readable as yaml");
