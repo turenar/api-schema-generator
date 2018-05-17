@@ -47,7 +47,7 @@ class GenerateCommand extends Command
 		if ($base) {
 			$generator->setBaseSpecFile($base);
 		}
-		$inc = $input->getOption('inc');
+		$inc = $input->getOption('incdir');
 		if ($inc) {
 			foreach ($inc as $dir) {
 				$generator->addIncludeDirectory($dir);
