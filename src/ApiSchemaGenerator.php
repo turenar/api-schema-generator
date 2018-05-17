@@ -25,9 +25,6 @@ class ApiSchemaGenerator implements IncludeResolver
 		if ($yaml === false) {
 			throw new \Exception("$infile is not readable as yaml");
 		}
-		if (!(isset($yaml['input']) && isset($yaml['output']))) {
-			throw new \Exception("$infile: required root object is not found");
-		}
 		return $yaml;
 	}
 
@@ -46,8 +43,12 @@ class ApiSchemaGenerator implements IncludeResolver
 	{
 		$yaml = $this->loadYaml($infile);
 		$spec = new SpecView($this, null, $yaml, $infile, '');
+
 		if ($this->base_spec) {
 			$spec->merge($this->base_spec);
+		}
+		if (!(isset($yaml['input']) && isset($yaml['output']))) {
+			throw new \Exception("$infile: required root object is not found");
 		}
 		$schema = (new Endpoint($spec))->getSchema();
 		file_put_contents($outfile, json_encode($schema));
