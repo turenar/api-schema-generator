@@ -155,7 +155,7 @@ class SpecView implements \IteratorAggregate
 		}
 	}
 
-	protected function merge(SpecView $another)
+	public function merge(SpecView $another)
 	{
 		foreach ($another->arr as $field_name => $new_value) {
 			if ($new_value instanceof SpecView) {

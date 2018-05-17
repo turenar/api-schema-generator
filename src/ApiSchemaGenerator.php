@@ -10,14 +10,28 @@ class ApiSchemaGenerator implements IncludeResolver
 {
 	protected $includes = [];
 	protected $base_spec_file;
+	protected $base_spec;
 
 	public function __construct()
 	{
 	}
 
+	protected function loadYaml($infile)
+	{
+		$yaml = yaml_parse_file($infile);
+		if ($yaml === false) {
+			throw new \Exception("$infile is not readable as yaml");
+		}
+		if (!(isset($yaml['input']) && isset($yaml['output']))) {
+			throw new \Exception("$infile: required root object is not found");
+		}
+		return $yaml;
+	}
+
 	public function setBaseSpecFile(string $filename)
 	{
 		$this->base_spec_file = $filename;
+		$this->base_spec = new SpecView($this, null, $this->loadYaml($filename), $filename, '');
 	}
 
 	public function generateSchema($spec): array
@@ -27,14 +41,12 @@ class ApiSchemaGenerator implements IncludeResolver
 
 	public function generateFile($infile, $outfile)
 	{
-		$yaml = yaml_parse_file($infile);
-		if ($yaml === false) {
-			throw new \Exception("$infile is not readable as yaml");
+		$yaml = $this->loadYaml($infile);
+		$spec = new SpecView($this, null, $yaml, $infile, '');
+		if ($this->base_spec) {
+			$spec->merge($this->base_spec);
 		}
-		if (!(isset($yaml['input']) && isset($yaml['output']))) {
-			throw new \Exception("$infile: required root object is not found");
-		}
-		$schema = (new Endpoint(new SpecView($this, null, $yaml, $infile, '')))->getSchema();
+		$schema = (new Endpoint($spec))->getSchema();
 		file_put_contents($outfile, json_encode($schema));
 	}
 
