@@ -12,7 +12,7 @@ class SpecException extends \Exception
 	 * @param string $field_path
 	 * @param string $reason
 	 */
-	public function __construct($view, $field_path, $reason)
+	public function __construct(SpecView $view, string $field_path, string $reason)
 	{
 		parent::__construct(sprintf("%s: %s in %s", $reason, $field_path, $view->getFilename()));
 	}
