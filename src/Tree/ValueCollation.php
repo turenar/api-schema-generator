@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema\Tree;
 
 
+use Turenar\ApiSchema\SpecException;
 use Turenar\ApiSchema\SpecView;
 
 class ValueCollation implements TreeElement
@@ -51,10 +52,14 @@ class ValueCollation implements TreeElement
 			case 'datetime':
 				return ['type' => 'string', 'format' => 'date-time'];
 			default:
-				throw new \Exception("Unknown spec type: $type");
+				throw new SpecException($this->spec, $this->spec->getRefPath(), "Unknown spec type: $type");
 		}
 	}
 
+	/**
+	 * @return array
+	 * @throws SpecException
+	 */
 	public function getSchema()
 	{
 		$schema = $this->generateFieldSchema($this->spec->requireField('type'));

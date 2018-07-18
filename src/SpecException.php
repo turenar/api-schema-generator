@@ -14,6 +14,6 @@ class SpecException extends \Exception
 	 */
 	public function __construct(SpecView $view, string $field_path, string $reason)
 	{
-		parent::__construct(sprintf("%s: %s in %s", $reason, $field_path, $view->getFilename()));
+		parent::__construct(sprintf("%s [%s:%s]", $reason, $view->getFilename(), $field_path));
 	}
 }
