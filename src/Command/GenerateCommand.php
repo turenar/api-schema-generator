@@ -35,10 +35,8 @@ class GenerateCommand extends Command
 			throw new \Exception('$src is not found');
 		}
 
-		chdir($src);
-		//  init_propel_map(); // FIXME
 		$file_pattern = '@\./[^_].+\.yaml$@';
-		$dir = new \RecursiveDirectoryIterator('.');
+		$dir = new \RecursiveDirectoryIterator($src);
 		$ite = new \RecursiveIteratorIterator($dir);
 		$yaml_files_iterator = new \RegexIterator($ite, $file_pattern, \RegexIterator::GET_MATCH);
 		$generator = new ApiSchemaGenerator();
@@ -66,7 +64,8 @@ class GenerateCommand extends Command
 					mkdir($outdir, 0755, true);
 				}
 
-				$generator->generateFile($yaml_file, $outfile);
+				$spec = $generator->parseFile($yaml_file);
+				$generator->createSchemaFile($spec, $outfile);
 			}
 		}
 	}

@@ -16,6 +16,12 @@ class ObjectCollation implements TreeElement
 	/** @var SpecView */
 	protected $spec;
 
+	/**
+	 * ObjectCollation constructor.
+	 * @param SpecView $spec
+	 * @param bool $root
+	 * @throws SpecException
+	 */
 	public function __construct(SpecView $spec, bool $root = false)
 	{
 		/** @var TreeElement[] $collations */
@@ -49,7 +55,7 @@ class ObjectCollation implements TreeElement
 	/**
 	 * @param SpecView $spec
 	 * @return TreeElement
-	 * @throws \Exception
+	 * @throws SpecException
 	 */
 	protected static function createCollation(SpecView $spec): TreeElement
 	{

@@ -19,11 +19,11 @@ class ApiSchemaGenerator implements IncludeResolver
 	protected function loadYaml($infile)
 	{
 		if (!file_exists($infile)) {
-			throw new \Exception("$infile is not found");
+			throw new \RuntimeException("$infile is not found");
 		}
 		$yaml = yaml_parse_file($infile);
 		if ($yaml === false) {
-			throw new \Exception("$infile is not readable as yaml");
+			throw new \RuntimeException("$infile is not readable as yaml");
 		}
 		return $yaml;
 	}
@@ -39,7 +39,7 @@ class ApiSchemaGenerator implements IncludeResolver
 		return (new Endpoint(new SpecView($this, null, $spec, '(null)', '')))->getSchema();
 	}
 
-	public function generateFile($infile, $outfile)
+	public function parseFile(string  $infile): Endpoint
 	{
 		$yaml = $this->loadYaml($infile);
 		$spec = new SpecView($this, null, $yaml, $infile, '');
@@ -47,11 +47,17 @@ class ApiSchemaGenerator implements IncludeResolver
 		if ($this->base_spec) {
 			$spec->merge($this->base_spec);
 		}
-		if (!(isset($yaml['input']) && isset($yaml['output']))) {
-			throw new \Exception("$infile: required root object is not found");
+		if (!isset($yaml['input'])) {
+			$spec->newChild('input', '<default>');
 		}
-		$schema = (new Endpoint($spec))->getSchema();
-		file_put_contents($outfile, json_encode($schema));
+		$spec->requireField('output');
+
+		return new Endpoint($spec);
+	}
+
+	public function createSchemaFile(Endpoint $spec, string $outfile)
+	{
+		file_put_contents($outfile, json_encode($spec->getSchema()));
 	}
 
 	public function addIncludeDirectory(string $dir)

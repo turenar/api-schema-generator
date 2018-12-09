@@ -11,6 +11,11 @@ class Endpoint implements TreeElement
 	protected $input;
 	protected $output;
 
+	/**
+	 * Endpoint constructor.
+	 * @param SpecView $schema
+	 * @throws \Turenar\ApiSchema\SpecException
+	 */
 	public function __construct(SpecView $schema)
 	{
 		$this->input = new Input($schema->getChild('input'));

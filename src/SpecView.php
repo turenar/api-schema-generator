@@ -109,6 +109,12 @@ class SpecView implements \IteratorAggregate
 		return $this->resolver;
 	}
 
+	public function newChild($key, $included_by = '<unknown>'): SpecView
+	{
+		$this->arr[$key] = [];
+		$this->included_fields[$key] = $included_by;
+		return $this;
+	}
 	/**
 	 * @param string $key
 	 * @return string
