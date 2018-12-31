@@ -7,6 +7,7 @@ namespace Turenar\ApiSchema\Test\Schema;
 use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 use Turenar\ApiSchema\ApiSchemaGenerator;
+use Turenar\ApiSchema\Tree\Visitor\SchemaVisitor;
 
 class ParserTest extends TestCase
 {
@@ -40,8 +41,8 @@ class ParserTest extends TestCase
 		$generator = new ApiSchemaGenerator();
 		$base_dir = self::FILES_DIR . '/' . $dir;
 
-		$test_spec = yaml_parse_file($base_dir . '/spec.yaml');
-		$schema = $generator->generateSchema($test_spec);
+		$visitor = new SchemaVisitor();
+		$schema = $visitor->visit($generator->parseFile($base_dir.'/spec.yaml'));
 		$this->assertNotEmpty($schema['input'] ?? null, 'test specification is not valid');
 		$this->assertNotEmpty($schema['output'] ?? null, 'test specification is not valid');
 
