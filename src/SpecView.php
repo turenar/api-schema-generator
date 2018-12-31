@@ -42,7 +42,7 @@ class SpecView implements \IteratorAggregate
 		$this->resolveInclude($name);
 	}
 
-	public function getChild($name): SpecView
+	public function getChild(string $name): SpecView
 	{
 		$child = $this->getField($name);
 		if ($child instanceof SpecView) {
@@ -52,12 +52,12 @@ class SpecView implements \IteratorAggregate
 		}
 	}
 
-	public function hasChild($name): bool
+	public function hasChild(string $name): bool
 	{
 		return $this->getField($name) instanceof SpecView;
 	}
 
-	public function requireField($field_name)
+	public function requireField(string $field_name)
 	{
 		if (!$this->hasField($field_name)) {
 			throw new SpecException($this, $this->newChildPath($field_name), 'not found');
@@ -65,9 +65,18 @@ class SpecView implements \IteratorAggregate
 		return $this->getField($field_name);
 	}
 
-	public function getField($field_name, $default = null)
+	public function getField(string $field_name, $default = null)
 	{
 		return $this->arr[$field_name] ?? $default;
+	}
+
+	public function getBool(string $field_name, ?bool $default = null): ?bool
+	{
+		$value = $this->getField($field_name, $default);
+		if ($value !== null && !is_bool($value)) {
+			throw new SpecException($this, $this->newChildPath($field_name), 'boolean expected but ' . gettype($value));
+		}
+		return $value;
 	}
 
 	public function hasField($field_name)
@@ -109,7 +118,7 @@ class SpecView implements \IteratorAggregate
 		return $this->resolver;
 	}
 
-	public function newChild($key, $included_by = '<unknown>'): SpecView
+	public function newChild(string $key, $included_by = '<unknown>'): SpecView
 	{
 		$this->arr[$key] = [];
 		$this->included_fields[$key] = $included_by;

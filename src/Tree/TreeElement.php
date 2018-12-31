@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema\Tree;
 
 
+use Turenar\ApiSchema\SpecView;
+
 interface TreeElement
 {
-	public function getSchema();
+	public function isRequired(): bool;
 
-	public function isRequired();
+	public function getSpec(): SpecView;
 }

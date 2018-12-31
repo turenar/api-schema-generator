@@ -5,30 +5,10 @@ namespace Turenar\ApiSchema\Tree;
 
 
 use Turenar\ApiSchema\SpecException;
-use Turenar\ApiSchema\SpecView;
 
-class ValueCollation implements TreeElement
+class ValueCollation extends AbstractTreeElement
 {
-	/** @var SpecView */
-	private $spec;
 
-	public function __construct(SpecView $spec)
-	{
-		$this->spec = $spec;
-	}
-
-	public function generateFieldSchema($type)
-	{
-		$nullable = substr($type, 0, 1) === '?';
-		if ($nullable) {
-			$type = substr($type, 1);
-		}
-		$schema = $this->generateBaseType($type);
-		if ($nullable) {
-			$schema['type'] = [$schema['type'], 'null'];
-		}
-		return $schema;
-	}
 
 	/**
 	 * @param $type
@@ -56,27 +36,33 @@ class ValueCollation implements TreeElement
 		}
 	}
 
-	/**
-	 * @return array
-	 * @throws SpecException
-	 */
-	public function getSchema()
+	public function isArray(): bool
 	{
-		$schema = $this->generateFieldSchema($this->spec->requireField('type'));
-		if ($this->spec->hasField('default')) {
-			$schema['default'] = $this->spec->getField('default');
-		}
-		if ($this->spec->getField('array', false)) {
-			$schema = [
-				'type' => 'array',
-				'items' => $schema,
-			];
-		}
-		return $schema;
+		return $this->spec->getBool('array', false);
 	}
 
-	public function isRequired()
+	public function isRequired(): bool
 	{
 		return !$this->spec->hasField('default') && $this->spec->getField('required', true);
+	}
+
+	public function hasDefault()
+	{
+		return $this->spec->hasField('default');
+	}
+
+	public function getDefault()
+	{
+		return $this->spec->getField('default');
+	}
+
+	public function getType(): string
+	{
+		$typeField = $this->spec->requireField('type');
+		if (!is_string($typeField)) {
+			throw new SpecException($this->spec,
+				$this->spec->newChildPath('type'), "string expected, but got " . gettype($typeField));
+		}
+		return $typeField;
 	}
 }

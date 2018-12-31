@@ -65,6 +65,7 @@ class GenerateCommand extends Command
 				}
 
 				$spec = $generator->parseFile($yaml_file);
+
 				$generator->createSchemaFile($spec, $outfile);
 			}
 		}

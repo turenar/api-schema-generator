@@ -34,12 +34,7 @@ class ApiSchemaGenerator implements IncludeResolver
 		$this->base_spec = new SpecView($this, null, $this->loadYaml($filename), $filename, '');
 	}
 
-	public function generateSchema($spec): array
-	{
-		return (new Endpoint(new SpecView($this, null, $spec, '(null)', '')))->getSchema();
-	}
-
-	public function parseFile(string  $infile): Endpoint
+	public function parseFile(string $infile): Endpoint
 	{
 		$yaml = $this->loadYaml($infile);
 		$spec = new SpecView($this, null, $yaml, $infile, '');
@@ -55,11 +50,6 @@ class ApiSchemaGenerator implements IncludeResolver
 		return new Endpoint($spec);
 	}
 
-	public function createSchemaFile(Endpoint $spec, string $outfile)
-	{
-		file_put_contents($outfile, json_encode($spec->getSchema()));
-	}
-
 	public function addIncludeDirectory(string $dir)
 	{
 		$this->includes[] = $dir;
@@ -73,7 +63,7 @@ class ApiSchemaGenerator implements IncludeResolver
 				$yaml = yaml_parse_file($path);
 				if ($yaml === false) {
 					throw new SpecException($parent, $parent->newChildPath($name), 'yaml parse failed');
-				} else if (!is_array($yaml)) {
+				} elseif (!is_array($yaml)) {
 					throw new SpecException($parent, $parent->newChildPath($name), 'loaded yaml is not array');
 				}
 				return new SpecView($parent->getResolver(), $name, $yaml, $path, '');

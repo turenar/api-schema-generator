@@ -7,7 +7,7 @@ namespace Turenar\ApiSchema\Tree;
 use Turenar\ApiSchema\SpecException;
 use Turenar\ApiSchema\SpecView;
 
-class ObjectCollation implements TreeElement
+class ObjectCollation extends AbstractTreeElement
 {
 	/** @var bool */
 	protected $required;
@@ -24,6 +24,8 @@ class ObjectCollation implements TreeElement
 	 */
 	public function __construct(SpecView $spec, bool $root = false)
 	{
+		parent::__construct($spec);
+
 		/** @var TreeElement[] $collations */
 		$collations = [];
 
@@ -68,34 +70,32 @@ class ObjectCollation implements TreeElement
 		}
 	}
 
-	public function getSchema()
-	{
-		$schema = [
-			'type' => 'object',
-			'required' => [],
-			'properties' => [],
-			'additionalProperties' => false,
-		];
-		foreach ($this->collations as $name => $collation) {
-			if ($collation->isRequired()) {
-				$schema['required'][] = $name;
-			}
-			$schema['properties'][$name] = $collation->getSchema();
-		}
-
-		if ($this->spec->getField('array', false)) {
-			$schema = [
-				'type' => 'array',
-				'items' => $schema
-			];
-		}
-		return $schema;
-	}
-
-	public function isRequired()
+	public function isRequired(): bool
 	{
 		return $this->required;
 	}
+
+	/**
+	 * @return TreeElement[]
+	 */
+	public function getCollations(): array
+	{
+		return $this->collations;
+	}
+
+	/**
+	 * @return SpecView
+	 */
+	public function getSpec(): SpecView
+	{
+		return $this->spec;
+	}
+
+	public function isArray(): bool
+	{
+		return $this->spec->getBool('array', false);
+	}
+
 
 	protected function searchIncludeFile($include_file)
 	{

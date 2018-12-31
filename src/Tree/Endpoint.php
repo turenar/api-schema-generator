@@ -6,7 +6,7 @@ namespace Turenar\ApiSchema\Tree;
 
 use Turenar\ApiSchema\SpecView;
 
-class Endpoint implements TreeElement
+class Endpoint extends AbstractTreeElement
 {
 	protected $input;
 	protected $output;
@@ -18,17 +18,29 @@ class Endpoint implements TreeElement
 	 */
 	public function __construct(SpecView $schema)
 	{
+		parent::__construct($schema);
 		$this->input = new Input($schema->getChild('input'));
 		$this->output = new Output($schema->getChild('output'));
 	}
 
-	public function getSchema()
-	{
-		return ['input' => $this->input->getSchema(), 'output' => $this->output->getSchema()];
-	}
-
-	public function isRequired()
+	public function isRequired(): bool
 	{
 		return true;
+	}
+
+	/**
+	 * @return Input
+	 */
+	public function getInput(): Input
+	{
+		return $this->input;
+	}
+
+	/**
+	 * @return Output
+	 */
+	public function getOutput(): Output
+	{
+		return $this->output;
 	}
 }

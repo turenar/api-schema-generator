@@ -12,14 +12,4 @@ abstract class SchemaRootBase extends ObjectCollation
 	{
 		parent::__construct($spec, true);
 	}
-
-	public function getSchema()
-	{
-		$schema = parent::getSchema();
-		$schema += [
-			'$schema' => 'http://json-schema.org/draft-04/schema#',
-		];
-
-		return $schema;
-	}
 }
