@@ -2,6 +2,7 @@
     "name": "turenar/api-schema-generator",
     "type": "library",
     "license": "MIT",
+    "description": "",
     "authors": [
         {
             "name": "Turenar",
@@ -25,7 +26,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Turenar\\ApiSchema\\Test\\": "tests"
+            "Turenar\\ApiSchema\\": "tests"
         }
     },
     "bin": [

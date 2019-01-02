@@ -1,13 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema\Test\Schema;
+namespace Turenar\ApiSchema\Generator\Schema;
 
 
 use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
-use Turenar\ApiSchema\ApiSchemaGenerator;
-use Turenar\ApiSchema\Tree\Visitor\SchemaVisitor;
 
 class ParserTest extends TestCase
 {
@@ -38,7 +36,7 @@ class ParserTest extends TestCase
 	 */
 	public function testParse($dir, $test_index)
 	{
-		$generator = new ApiSchemaGenerator();
+		$generator = new ExposedSpecProcessor();
 		$base_dir = self::FILES_DIR . '/' . $dir;
 
 		$visitor = new SchemaVisitor();
