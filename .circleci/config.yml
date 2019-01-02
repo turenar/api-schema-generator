@@ -1,0 +1,41 @@
+version: 2
+
+jobs:
+  build:
+    environment:
+      CC_TEST_REPORTER_ID: ca0bae664bbecc0272e3aaca7aae888d85b01b31669ce72e5ff3467dd2de3cac
+    docker:
+    - image: circleci/php:7.1-cli-node
+    steps:
+    - checkout
+    - run:
+        name: Setup php dependencies
+        command: |
+          sudo pecl install yaml
+          sudo docker-php-ext-enable yaml
+    - run:
+        name: Setup project dependencies
+        command: |
+          sudo composer self-update
+    - run:
+        name: Setup Code Climate test-reporter
+        command: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+    - run: sudo composer self-update
+    - restore_cache:
+        keys:
+        - composer-v1-{{ checksum "composer.json" }}
+        - compsoer-v1-
+    - run: composer install -n --prefer-dist
+    - save_cache:
+        key: composer-v1-{{ checksum "composer.json" }}
+        paths:
+        - vendor
+    - run:
+        name: Run tests
+        command: |
+          sudo docker-php-ext-enable xdebug
+          ./cc-test-reporter before-build
+          sudo vendor/bin/phpunit --coverage-clover clover.xml
+          ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
