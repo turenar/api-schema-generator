@@ -11,8 +11,9 @@ jobs:
     - run:
         name: Setup php dependencies
         command: |
+          sudo apt-get update
           sudo apt-get install -y libyaml-dev
-          sudo pecl install yaml
+          sudo pecl install yaml </dev/null
           sudo docker-php-ext-enable yaml
     - run:
         name: Setup project dependencies
