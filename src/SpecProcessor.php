@@ -4,10 +4,18 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema;
 
 
+use Turenar\ApiSchema\Exception\SpecException;
+use Turenar\ApiSchema\Generator\ContentGenerator;
+use Turenar\ApiSchema\Generator\Schema\SchemaContentGenerator;
+use Turenar\ApiSchema\Resolver\IncludeResolver;
 use Turenar\ApiSchema\Tree\Endpoint;
 
-class ApiSchemaGenerator implements IncludeResolver
+class SpecProcessor implements IncludeResolver
 {
+	protected static $generators = [
+		'schema' => SchemaContentGenerator::class,
+	];
+
 	protected $includes = [];
 	protected $base_spec_file;
 	protected $base_spec;
@@ -34,7 +42,7 @@ class ApiSchemaGenerator implements IncludeResolver
 		$this->base_spec = new SpecView($this, null, $this->loadYaml($filename), $filename, '');
 	}
 
-	public function parseFile(string $infile): Endpoint
+	protected function parseFile(string $infile): Endpoint
 	{
 		$yaml = $this->loadYaml($infile);
 		$spec = new SpecView($this, null, $yaml, $infile, '');
@@ -70,5 +78,39 @@ class ApiSchemaGenerator implements IncludeResolver
 			}
 		}
 		return null;
+	}
+
+	public function process($src, $dst, $generator_name)
+	{
+		$generator = $this->newGenerator($generator_name);
+		$iterator = new SourceTargetIterable($generator, $src, $dst);
+
+		$targetFileObject = null;
+		foreach ($iterator as $source => $target) {
+			if (!$iterator->isTargetSingle() || $targetFileObject === null) {
+				$targetFileObject = $generator->targetFileObject($target, true);
+			}
+			$endpoint = $this->parseFile($source);
+			$generator->generateContent($endpoint, $targetFileObject);
+		}
+	}
+
+	protected function newGenerator($generator_name): ContentGenerator
+	{
+		$generator = static::$generators[$generator_name] ?? null;
+		if ($generator === null) {
+			throw new \RuntimeException("unknown generator: $generator_name");
+		}
+		return new $generator;
+	}
+
+	protected function replaceExtension(string $source, string $target_extension)
+	{
+		$source_filename = basename($source);
+		$source_extension_index = strrchr($source, '.');
+		$target_filename = $source_extension_index < 0
+			? $source_filename
+			: (substr($source_filename, 0, $source_extension_index) . '.' . $target_extension);
+		return dirname($source, $target_filename);
 	}
 }

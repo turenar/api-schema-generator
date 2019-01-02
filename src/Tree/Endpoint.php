@@ -14,7 +14,6 @@ class Endpoint extends AbstractTreeElement
 	/**
 	 * Endpoint constructor.
 	 * @param SpecView $schema
-	 * @throws \Turenar\ApiSchema\SpecException
 	 */
 	public function __construct(SpecView $schema)
 	{

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema\Tree;
 
 
-use Turenar\ApiSchema\SpecException;
+use Turenar\ApiSchema\Exception\SpecException;
 use Turenar\ApiSchema\SpecView;
 
 class ObjectCollation extends AbstractTreeElement

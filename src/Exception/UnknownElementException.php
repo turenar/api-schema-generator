@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema\Tree\Visitor;
+namespace Turenar\ApiSchema\Exception;
 
 
 use Turenar\ApiSchema\Tree\TreeElement;

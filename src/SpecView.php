@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema;
 
 
+use Turenar\ApiSchema\Exception\SpecException;
+use Turenar\ApiSchema\Resolver\IncludeResolver;
+
 class SpecView implements \IteratorAggregate
 {
 	/** @var IncludeResolver */

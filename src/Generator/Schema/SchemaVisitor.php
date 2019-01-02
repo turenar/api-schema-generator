@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Turenar\ApiSchema\Tree\Visitor;
+namespace Turenar\ApiSchema\Generator\Schema;
 
 
-use Turenar\ApiSchema\SpecException;
+use Turenar\ApiSchema\Exception\SpecException;
 use Turenar\ApiSchema\SpecView;
+use Turenar\ApiSchema\Tree\AbstractTreeVisitor;
 use Turenar\ApiSchema\Tree\Endpoint;
 use Turenar\ApiSchema\Tree\Input;
 use Turenar\ApiSchema\Tree\ObjectCollation;
@@ -92,14 +94,10 @@ class SchemaVisitor extends AbstractTreeVisitor
 		}
 	}
 
-	protected function generateFieldSchema(SpecView $spec, $type)
+	protected function generateFieldSchema(SpecView $spec, ValueCollation $collation)
 	{
-		$nullable = substr($type, 0, 1) === '?';
-		if ($nullable) {
-			$type = substr($type, 1);
-		}
-		$schema = $this->generateBaseType($spec, $type);
-		if ($nullable) {
+		$schema = $this->generateBaseType($spec, $collation->getType());
+		if ($collation->isNullable()) {
 			$schema['type'] = [$schema['type'], 'null'];
 		}
 		return $schema;
@@ -107,7 +105,7 @@ class SchemaVisitor extends AbstractTreeVisitor
 
 	public function visitValueCollation(ValueCollation $collation)
 	{
-		$schema = $this->generateFieldSchema($collation->getSpec(), $collation->getType());
+		$schema = $this->generateFieldSchema($collation->getSpec(), $collation);
 		if ($collation->hasDefault()) {
 			$schema['default'] = $collation->getDefault();
 		}

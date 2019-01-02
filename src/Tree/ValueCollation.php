@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Turenar\ApiSchema\Tree;
 
-
-use Turenar\ApiSchema\SpecException;
+use Turenar\ApiSchema\Exception\SpecException;
 
 class ValueCollation extends AbstractTreeElement
 {
@@ -56,7 +55,7 @@ class ValueCollation extends AbstractTreeElement
 		return $this->spec->getField('default');
 	}
 
-	public function getType(): string
+	public function getRawType(): string
 	{
 		$typeField = $this->spec->requireField('type');
 		if (!is_string($typeField)) {
@@ -64,5 +63,19 @@ class ValueCollation extends AbstractTreeElement
 				$this->spec->newChildPath('type'), "string expected, but got " . gettype($typeField));
 		}
 		return $typeField;
+	}
+
+	public function isNullable(): bool
+	{
+		return substr($this->getRawType(), 0, 1) === '?';
+	}
+
+	public function getType(): string
+	{
+		if ($this->isNullable()) {
+			return substr($this->getRawType(), 1);
+		} else {
+			return $this->getRawType();
+		}
 	}
 }

@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema;
+namespace Turenar\ApiSchema\Resolver;
 
+
+use Turenar\ApiSchema\SpecView;
 
 interface IncludeResolver
 {

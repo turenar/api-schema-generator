@@ -1,15 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema\Tree\Visitor;
+namespace Turenar\ApiSchema\Tree;
 
 
-use Turenar\ApiSchema\Tree\Endpoint;
-use Turenar\ApiSchema\Tree\Input;
-use Turenar\ApiSchema\Tree\ObjectCollation;
-use Turenar\ApiSchema\Tree\Output;
-use Turenar\ApiSchema\Tree\TreeElement;
-use Turenar\ApiSchema\Tree\ValueCollation;
+use Turenar\ApiSchema\Exception\UnknownElementException;
 
 abstract class AbstractTreeVisitor implements TreeVisitor
 {

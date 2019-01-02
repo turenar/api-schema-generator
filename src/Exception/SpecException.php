@@ -1,10 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema;
+namespace Turenar\ApiSchema\Exception;
 
 
-class SpecException extends \Exception
+use Turenar\ApiSchema\SpecView;
+
+class SpecException extends GenerationException
 {
 	/**
 	 * SpecException constructor.
