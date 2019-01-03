@@ -1,0 +1,83 @@
+{
+  "tests": [
+    {
+      "expected": "pass",
+      "input": {
+        "foo": [
+          {
+            "bar": [
+              1
+            ]
+          }
+        ]
+      },
+      "output": {
+        "foo": [
+          {
+            "bar": [
+              "hoge"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": {
+          "bar": 1
+        }
+      }
+    },
+    {
+      "expected": "pass",
+      "input": {
+        "foo": [
+          {
+            "bar": []
+          }
+        ]
+      },
+      "output": {
+        "foo": []
+      }
+    },
+    {
+      "expected": "pass",
+      "input": {
+        "foo": [
+          {
+            "bar": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "bar": [
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      "output": {
+        "foo": []
+      }
+    },
+    {
+      "expected": "fail",
+      "input": {
+        "foo": [
+          {
+            "bar": [
+              1,
+              "string"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

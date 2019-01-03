@@ -1,0 +1,14 @@
+input:
+  foo:
+    array: true
+    +fields:
+      bar:
+        type: int
+        array: true
+output:
+  foo:
+    array: true
+    +fields:
+      bar:
+        type: string
+        array: true
