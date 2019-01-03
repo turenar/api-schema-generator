@@ -7,7 +7,7 @@ namespace Turenar\ApiSchema\Generator\Schema;
 use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 
-class ParserTest extends TestCase
+class SchemaVisitorTest extends TestCase
 {
 	const FILES_DIR = __DIR__ . '/files/';
 
