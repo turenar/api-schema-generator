@@ -66,21 +66,21 @@ class SourceTargetIterable implements \IteratorAggregate
 	{
 		$target_info = new \SplFileInfo($this->target);
 
-		$file_pattern = '@\./[^_].+\.yaml$@';
-		$dir = new \RecursiveDirectoryIterator($this->source);
+		$file_pattern = /** @lang RegExp */
+			'@^' . preg_quote($this->source) . '((?:[^_.].+/)*/[^_.][^/]+\.yaml)$@';
+		$dir = new \RecursiveDirectoryIterator($this->source, \RecursiveDirectoryIterator::CURRENT_AS_PATHNAME);
 		$ite = new \RecursiveIteratorIterator($dir);
 		$yaml_files_iterator = new \RegexIterator($ite, $file_pattern, \RegexIterator::GET_MATCH);
-
-		if ($target_info->getRealPath() === false) {
+		if (!file_exists($this->target)) {
 			// not exists
 			$is_target_single = !$this->generator->canTargetMultiFile();
 		} else {
 			$is_target_single = !$target_info->isDir();
 		}
 		if ($is_target_single) {
-			$this->iterator = $this->iterateDirToDir($yaml_files_iterator);
-		} else {
 			$this->iterator = $this->iterateDirToFile($yaml_files_iterator);
+		} else {
+			$this->iterator = $this->iterateDirToDir($yaml_files_iterator);
 		}
 		$this->is_target_single = $is_target_single;
 	}
@@ -98,9 +98,11 @@ class SourceTargetIterable implements \IteratorAggregate
 		}
 
 		foreach ($iterator as $file_match) {
-			$target = $this->target . '/' . $this->replaceExtension($file_match, $this->generator->targetExtension());
+			$file_path = $file_match[0];
+			$file_name = $file_match[1];
+			$target = $this->target . $this->replaceExtension($file_name, $this->generator->targetExtension());
 
-			yield $file_match[0] => $target;
+			yield $file_path => $target;
 		}
 	}
 
@@ -124,11 +126,11 @@ class SourceTargetIterable implements \IteratorAggregate
 	protected function replaceExtension(string $source, string $target_extension)
 	{
 		$source_filename = basename($source);
-		$source_extension_index = strrchr($source, '.');
+		$source_extension_index = strrpos($source_filename, '.');
 		$target_filename = $source_extension_index < 0
 			? $source_filename
 			: (substr($source_filename, 0, $source_extension_index) . '.' . $target_extension);
-		return dirname($source, $target_filename);
+		return dirname($source) . '/' . $target_filename;
 	}
 
 	protected function createFileIterator()

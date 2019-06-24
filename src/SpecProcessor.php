@@ -29,7 +29,8 @@ class SpecProcessor implements IncludeResolver
 		if (!file_exists($infile)) {
 			throw new \RuntimeException("$infile is not found");
 		}
-		$yaml = yaml_parse_file($infile);
+		$yaml_content = file_get_contents($infile);
+		$yaml = yaml_parse($yaml_content);
 		if ($yaml === false) {
 			throw new \RuntimeException("$infile is not readable as yaml");
 		}
@@ -102,15 +103,5 @@ class SpecProcessor implements IncludeResolver
 			throw new \RuntimeException("unknown generator: $generator_name");
 		}
 		return new $generator;
-	}
-
-	protected function replaceExtension(string $source, string $target_extension)
-	{
-		$source_filename = basename($source);
-		$source_extension_index = strrchr($source, '.');
-		$target_filename = $source_extension_index < 0
-			? $source_filename
-			: (substr($source_filename, 0, $source_extension_index) . '.' . $target_extension);
-		return dirname($source, $target_filename);
 	}
 }

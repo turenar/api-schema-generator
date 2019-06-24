@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Turenar\ApiSchema\Generator\Schema;
+namespace Turenar\ApiSchema;
 
 
 use Turenar\ApiSchema\SpecProcessor;

@@ -13,7 +13,8 @@
         "php": ">= 7.1",
         "ext-json": "^1.4",
         "ext-yaml": "^2.0",
-        "symfony/console": ">= 3.3"
+        "symfony/console": ">= 3.3",
+        "mikey179/vfsStream": "^1.6"
     },
     "require-dev": {
         "phpunit/phpunit": ">= 5.4.0",
