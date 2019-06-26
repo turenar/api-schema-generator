@@ -91,6 +91,12 @@ class SpecProcessor implements IncludeResolver
 			/** @var FilePath $source */
 			/** @var FilePath $target */
 			if (!$iterator->isTargetSingle() || $targetFileObject === null) {
+				if ($target->getDir() !== null) {
+					$diretory = $target->getBasePath() . '/' . $target->getDir();
+					if (!is_dir($diretory)) {
+						mkdir($diretory, 0777, true);
+					}
+				}
 				$targetFileObject = $generator->targetFileObject($target->getPath(), $iterator->isTargetSingle());
 			}
 			$endpoint = $this->parseFile($source->getPath());
