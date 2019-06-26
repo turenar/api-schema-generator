@@ -67,7 +67,7 @@ class SourceTargetIterable implements \IteratorAggregate
 		$target_info = new \SplFileInfo($this->target);
 
 		$file_pattern = /** @lang RegExp */
-			'@^' . preg_quote($this->source) . '/?(?:((?:[^_.][^/]+/)*)([^_./][^/]+\.yaml))$@';
+			'@^' . preg_quote($this->source) . '/?(?:((?:[^/_.][^/]+/)*)([^_./][^/]+\.yaml))$@';
 		$dir = new \RecursiveDirectoryIterator($this->source, \RecursiveDirectoryIterator::CURRENT_AS_PATHNAME);
 		$ite = new \RecursiveIteratorIterator($dir);
 		$yaml_files_iterator = new \RegexIterator($ite, $file_pattern, \RegexIterator::GET_MATCH);
