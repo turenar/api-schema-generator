@@ -16,34 +16,34 @@ use Turenar\ApiSchema\Tree\ValueCollation;
 class SchemaVisitor extends AbstractTreeVisitor
 {
 
-	public function visitEndpoint(Endpoint $endpoint)
+	public function visitEndpoint(Endpoint $endpoint, $extras)
 	{
 		return [
-			'input' => $this->visitInput($endpoint->getInput()),
-			'output' => $this->visitOutput($endpoint->getOutput())
+			'input' => $this->visitInput($endpoint->getInput(), null),
+			'output' => $this->visitOutput($endpoint->getOutput(), null)
 		];
 	}
 
 	public function visitSchemaRootBase(ObjectCollation $collation)
 	{
-		$schema = $this->visitObjectCollation($collation);
+		$schema = $this->visitObjectCollation($collation, null);
 		$schema += [
 			'$schema' => 'http://json-schema.org/draft-04/schema#',
 		];
 		return $schema;
 	}
 
-	public function visitInput(Input $input)
+	public function visitInput(Input $input, $extras)
 	{
 		return $this->visitSchemaRootBase($input);
 	}
 
-	public function visitOutput(Output $output)
+	public function visitOutput(Output $output, $extras)
 	{
 		return $this->visitSchemaRootBase($output);
 	}
 
-	public function visitObjectCollation(ObjectCollation $parent)
+	public function visitObjectCollation(ObjectCollation $parent, $extras)
 	{
 		$schema = [
 			'type' => 'object',
@@ -103,7 +103,7 @@ class SchemaVisitor extends AbstractTreeVisitor
 		return $schema;
 	}
 
-	public function visitValueCollation(ValueCollation $collation)
+	public function visitValueCollation(ValueCollation $collation, $extras)
 	{
 		$schema = $this->generateFieldSchema($collation->getSpec(), $collation);
 		if ($collation->hasDefault()) {

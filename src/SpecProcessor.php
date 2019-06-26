@@ -88,11 +88,13 @@ class SpecProcessor implements IncludeResolver
 
 		$targetFileObject = null;
 		foreach ($iterator as $source => $target) {
+			/** @var FilePath $source */
+			/** @var FilePath $target */
 			if (!$iterator->isTargetSingle() || $targetFileObject === null) {
-				$targetFileObject = $generator->targetFileObject($target, true);
+				$targetFileObject = $generator->targetFileObject($target->getPath(), $iterator->isTargetSingle());
 			}
-			$endpoint = $this->parseFile($source);
-			$generator->generateContent($endpoint, $targetFileObject);
+			$endpoint = $this->parseFile($source->getPath());
+			$generator->generateContent($endpoint, $source, $targetFileObject);
 		}
 	}
 

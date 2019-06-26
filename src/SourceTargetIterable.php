@@ -67,7 +67,7 @@ class SourceTargetIterable implements \IteratorAggregate
 		$target_info = new \SplFileInfo($this->target);
 
 		$file_pattern = /** @lang RegExp */
-			'@^' . preg_quote($this->source) . '((?:[^_.].+/)*/[^_.][^/]+\.yaml)$@';
+			'@^' . preg_quote($this->source) . '/?(?:((?:[^_.][^/]+/)*)([^_./][^/]+\.yaml))$@';
 		$dir = new \RecursiveDirectoryIterator($this->source, \RecursiveDirectoryIterator::CURRENT_AS_PATHNAME);
 		$ite = new \RecursiveIteratorIterator($dir);
 		$yaml_files_iterator = new \RegexIterator($ite, $file_pattern, \RegexIterator::GET_MATCH);
@@ -96,13 +96,14 @@ class SourceTargetIterable implements \IteratorAggregate
 			throw NotSupportedConversionException::notSupportedToDir(
 				$this->generator, $this->target);
 		}
+		$this->is_target_single = false;
 
 		foreach ($iterator as $file_match) {
-			$file_path = $file_match[0];
-			$file_name = $file_match[1];
-			$target = $this->target . $this->replaceExtension($file_name, $this->generator->targetExtension());
+			$source = new FilePath($this->source, $file_match[1], $file_match[2]);
+			$target = new FilePath($this->target, $file_match[1],
+				$this->replaceExtension($file_match[2], $this->generator->targetExtension()));
 
-			yield $file_path => $target;
+			yield $source => $target;
 		}
 	}
 
@@ -117,9 +118,13 @@ class SourceTargetIterable implements \IteratorAggregate
 			throw NotSupportedConversionException::notSupportedDirToFile(
 				$this->generator, $this->source, $this->target);
 		}
+		$this->is_target_single = true;
+
+		$target_file = new FilePath($this->target);
 
 		foreach ($iterator as $file_match) {
-			yield $file_match[0] => $this->target;
+			$source = new FilePath($this->source, $file_match[1], $file_match[2]);
+			yield $source => $target_file;
 		}
 	}
 
@@ -141,11 +146,11 @@ class SourceTargetIterable implements \IteratorAggregate
 			$target = $target . basename($this->source);
 		}
 		$this->iterator = $this->iterateFile($target);
-		$this->is_target_single = !$this->generator->canTargetMultiFile();
 	}
 
 	protected function iterateFile(string $target): \Generator
 	{
+		$this->is_target_single = true;
 		yield $this->source => $target;
 	}
 }

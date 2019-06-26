@@ -8,20 +8,20 @@ use Turenar\ApiSchema\Exception\UnknownElementException;
 
 abstract class AbstractTreeVisitor implements TreeVisitor
 {
-	public function visit(TreeElement $element)
+	public function visit(TreeElement $element, $extras = null)
 	{
 		if ($element instanceof Endpoint) {
-			return $this->visitEndpoint($element);
+			return $this->visitEndpoint($element, $extras);
 		} elseif ($element instanceof Input) {
-			return $this->visitInput($element);
+			return $this->visitInput($element, $extras);
 		} elseif ($element instanceof Output) {
-			return $this->visitOutput($element);
+			return $this->visitOutput($element, $extras);
 		} elseif ($element instanceof ObjectCollation) {
-			return $this->visitObjectCollation($element);
+			return $this->visitObjectCollation($element, $extras);
 		} elseif ($element instanceof ValueCollation) {
-			return $this->visitValueCollation($element);
+			return $this->visitValueCollation($element, $extras);
 		} else {
-			throw UnknownElementException::create($element);
+			throw UnknownElementException::create($element, $extras);
 		}
 	}
 }

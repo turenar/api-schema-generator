@@ -6,13 +6,13 @@ namespace Turenar\ApiSchema\Tree;
 
 interface TreeVisitor
 {
-	public function visitEndpoint(Endpoint $endpoint);
+	public function visitEndpoint(Endpoint $endpoint, $extras);
 
-	public function visitInput(Input $input);
+	public function visitInput(Input $input, $extras);
 
-	public function visitObjectCollation(ObjectCollation $collation);
+	public function visitObjectCollation(ObjectCollation $collation, $extras);
 
-	public function visitOutput(Output $output);
+	public function visitOutput(Output $output, $extras);
 
-	public function visitValueCollation(ValueCollation $collation);
+	public function visitValueCollation(ValueCollation $collation, $extras);
 }

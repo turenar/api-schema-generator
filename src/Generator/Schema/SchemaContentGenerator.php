@@ -5,6 +5,7 @@ namespace Turenar\ApiSchema\Generator\Schema;
 
 
 use Turenar\ApiSchema\Generator\ContentGenerator;
+use Turenar\ApiSchema\FilePath;
 use Turenar\ApiSchema\Tree\Endpoint;
 
 class SchemaContentGenerator implements ContentGenerator
@@ -29,10 +30,10 @@ class SchemaContentGenerator implements ContentGenerator
 		return new \SplFileObject($target_path, 'w');
 	}
 
-	public function generateContent(Endpoint $endpoint, ?\SplFileObject $file)
+	public function generateContent(Endpoint $endpoint, FilePath $source, ?\SplFileObject $file)
 	{
 		$visitor = new SchemaVisitor();
-		$content = $visitor->visitEndpoint($endpoint);
+		$content = $visitor->visitEndpoint($endpoint, null);
 		$file->fwrite(json_encode($content));
 	}
 

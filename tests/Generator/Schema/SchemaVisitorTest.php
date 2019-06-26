@@ -40,7 +40,7 @@ class SchemaVisitorTest extends TryValidateTestCaseBase
 		$base_dir = self::FILES_DIR . '/' . $dir;
 
 		$visitor = new SchemaVisitor();
-		$schema = $visitor->visit($generator->parseFile($base_dir.'/spec.yaml'));
+		$schema = $visitor->visit($generator->parseFile($base_dir . '/spec.yaml'));
 		$this->assertNotEmpty($schema['input'] ?? null, 'test specification is not valid');
 		$this->assertNotEmpty($schema['output'] ?? null, 'test specification is not valid');
 
