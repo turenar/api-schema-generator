@@ -55,6 +55,11 @@ class SpecView implements \IteratorAggregate
 		}
 	}
 
+	public function getChildCount(): int
+	{
+		return count($this->arr);
+	}
+
 	public function hasChild(string $name): bool
 	{
 		return $this->getField($name) instanceof SpecView;
@@ -155,11 +160,18 @@ class SpecView implements \IteratorAggregate
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
 				$resolved_spec->included_by = $this;
-				if (!$resolved_spec->hasChild($name)) {
+				if ($resolved_spec->hasChild($name)) {
+					$target_spec = $resolved_spec->getChild($name);
+				} elseif ($resolved_spec->getChildCount() === 1) {
+					// TODO
+					foreach ($resolved_spec->arr as $child) {
+						$target_spec = $child;
+					}
+				} else {
 					$reason = sprintf('included file(%s) has no "%s"', $resolved_spec->getFilename(), $name);
 					throw new SpecException($this, $this->newChildPath('+include'), $reason);
 				}
-				$this->merge($resolved_spec->getChild($name));
+				$this->merge($target_spec);
 			}
 		}
 	}
