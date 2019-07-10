@@ -67,7 +67,7 @@ class SourceTargetIterable implements \IteratorAggregate
 		$target_info = new \SplFileInfo($this->target);
 
 		$file_pattern = /** @lang RegExp */
-			'@^' . preg_quote($this->source) . '/?(?:((?:[^/_.][^/]+/)*)([^_./][^/]+\.yaml))$@';
+			'@^' . preg_quote($this->source) . '/?(?:((?:[^/.][^/]+/)*)([^./][^/]+\.yaml))$@';
 		$dir = new \RecursiveDirectoryIterator($this->source, \RecursiveDirectoryIterator::CURRENT_AS_PATHNAME);
 		$ite = new \RecursiveIteratorIterator($dir);
 		$yaml_files_iterator = new \RegexIterator($ite, $file_pattern, \RegexIterator::GET_MATCH);
@@ -99,6 +99,10 @@ class SourceTargetIterable implements \IteratorAggregate
 		$this->is_target_single = false;
 
 		foreach ($iterator as $file_match) {
+			if ($this->shouldIgnoredFile($file_match[1])) {
+				continue;
+			}
+
 			$source = new FilePath($this->source, $file_match[1], $file_match[2]);
 			$target = new FilePath($this->target, $file_match[1],
 				$this->replaceExtension($file_match[2], $this->generator->targetExtension()));
@@ -123,6 +127,9 @@ class SourceTargetIterable implements \IteratorAggregate
 		$target_file = new FilePath($this->target);
 
 		foreach ($iterator as $file_match) {
+			if ($this->shouldIgnoredFile($file_match[1])) {
+				continue;
+			}
 			$source = new FilePath($this->source, $file_match[1], $file_match[2]);
 			yield $source => $target_file;
 		}
@@ -152,5 +159,14 @@ class SourceTargetIterable implements \IteratorAggregate
 	{
 		$this->is_target_single = true;
 		yield $this->source => $target;
+	}
+
+	/**
+	 * @param string $dir_path
+	 * @return bool
+	 */
+	protected function shouldIgnoredFile(string $dir_path): bool
+	{
+		return (bool)preg_match('@(?:\A|[/\\\\])_includes(?:\z|[/\\\\])@', $dir_path);
 	}
 }
