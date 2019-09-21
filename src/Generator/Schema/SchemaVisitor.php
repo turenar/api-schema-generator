@@ -64,6 +64,9 @@ class SchemaVisitor extends AbstractTreeVisitor
 				'items' => $schema
 			];
 		}
+		if ($parent->isNullable()) {
+			$schema['type'] = [$schema['type'], 'null'];
+		}
 		return $schema;
 	}
 

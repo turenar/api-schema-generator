@@ -67,7 +67,7 @@ class ValueCollation extends AbstractTreeElement
 
 	public function isNullable(): bool
 	{
-		return substr($this->getRawType(), 0, 1) === '?';
+		return substr($this->getRawType(), 0, 1) === '?' || $this->spec->getField('nullable', false);
 	}
 
 	public function getType(): string

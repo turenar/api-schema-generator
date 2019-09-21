@@ -96,6 +96,10 @@ class ObjectCollation extends AbstractTreeElement
 		return $this->spec->getBool('array', false);
 	}
 
+	public function isNullable(): bool
+	{
+		return (bool)$this->spec->getField('nullable', false);
+	}
 
 	protected function searchIncludeFile($include_file)
 	{
