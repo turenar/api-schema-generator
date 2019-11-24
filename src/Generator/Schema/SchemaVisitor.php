@@ -100,8 +100,14 @@ class SchemaVisitor extends AbstractTreeVisitor
 	protected function generateFieldSchema(SpecView $spec, ValueCollation $collation)
 	{
 		$schema = $this->generateBaseType($spec, $collation->getType());
+		if ($collation->hasEnum()) {
+			$schema['enum'] = $collation->getEnum()->toArray();
+		}
 		if ($collation->isNullable()) {
 			$schema['type'] = [$schema['type'], 'null'];
+			if ($collation->hasEnum()) {
+				$schema['type'][] = null;
+			}
 		}
 		return $schema;
 	}

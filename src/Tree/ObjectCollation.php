@@ -100,14 +100,4 @@ class ObjectCollation extends AbstractTreeElement
 	{
 		return (bool)$this->spec->getField('nullable', false);
 	}
-
-	protected function searchIncludeFile($include_file)
-	{
-		$include_file = SPEC_DIR . '/_includes/' . $include_file;
-		if (file_exists($include_file)) {
-			return $include_file;
-		} else {
-			throw new \Exception("$include_file is not found");
-		}
-	}
 }

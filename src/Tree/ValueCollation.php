@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace Turenar\ApiSchema\Tree;
 
 use Turenar\ApiSchema\Exception\SpecException;
+use Turenar\ApiSchema\SpecView;
 
 class ValueCollation extends AbstractTreeElement
 {
-
-
 	/**
 	 * @param $type
 	 * @return array
@@ -77,5 +76,15 @@ class ValueCollation extends AbstractTreeElement
 		} else {
 			return $this->getRawType();
 		}
+	}
+
+	public function hasEnum(): bool
+	{
+		return $this->spec->hasChild('enum');
+	}
+
+	public function getEnum(): SpecView
+	{
+		return $this->spec->getChild('enum');
 	}
 }

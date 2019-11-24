@@ -206,4 +206,9 @@ class SpecView implements \IteratorAggregate
 			unset($this->arr['+include']);
 		}
 	}
+
+	public function toArray(): array
+	{
+		return $this->arr;
+	}
 }
