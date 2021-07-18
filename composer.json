@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">= 7.1",
-        "ext-json": "^1.4",
-        "ext-yaml": "^2.0",
+        "ext-json": "*",
+        "ext-yaml": "*",
         "symfony/console": ">= 3.3",
         "mikey179/vfsStream": "^1.6"
     },
