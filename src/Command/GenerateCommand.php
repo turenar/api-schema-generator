@@ -49,5 +49,6 @@ class GenerateCommand extends Command
 		}
 
 		$processor->process($src, $dst, 'schema');
+		return 0;
 	}
 }
