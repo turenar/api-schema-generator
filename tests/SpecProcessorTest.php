@@ -19,7 +19,7 @@ class SpecProcessorTest extends TestCase
 	/** @var vfsStreamDirectory */
 	protected $output;
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -28,7 +28,7 @@ class SpecProcessorTest extends TestCase
 		$this->output = $this->root->getChild('output');
 	}
 
-	public function schemaGeneratorFiles()
+	public static function schemaGeneratorFiles()
 	{
 		$files = [];
 		foreach (new \DirectoryIterator(self::SCHEMA_GENERATOR_FILES_DIR) as $test_spec_dir) {
@@ -51,6 +51,7 @@ class SpecProcessorTest extends TestCase
 	/**
 	 * @dataProvider schemaGeneratorFiles
 	 */
+	#[\PHPUnit\Framework\Attributes\DataProvider('schemaGeneratorFiles')]
 	public function testProcessSchemaGeneratorFiles($dir, $test_index)
 	{
 		$processor = new ExposedSpecProcessor();
@@ -64,7 +65,7 @@ class SpecProcessorTest extends TestCase
 
 		$test_case = json_decode(file_get_contents($base_dir . '/tests.json'), false);
 		$test = $test_case->tests[$test_index];
-		$this->assertObjectHasAttribute('expected', $test);
+		$this->assertTrue(property_exists($test, 'expected'), 'test case must have "expected"');
 		$expected = $this->parseExpectation($test->expected);
 		if (isset($test->input)) {
 			$this->validate($schema['input'], $test->input, $expected);

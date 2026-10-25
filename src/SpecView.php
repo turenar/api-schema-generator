@@ -29,7 +29,7 @@ class SpecView implements \IteratorAggregate
 		array $arr,
 		string $filename,
 		string $ref_path,
-		SpecView $parent = null
+		?SpecView $parent = null
 	) {
 		$this->resolver = $resolver;
 		$this->filename = $filename;
@@ -95,7 +95,7 @@ class SpecView implements \IteratorAggregate
 	/**
 	 * @return \Generator
 	 */
-	public function getIterator()
+	public function getIterator(): \Traversable
 	{
 		foreach ($this->arr as $key => $value) {
 			yield $key => $value;

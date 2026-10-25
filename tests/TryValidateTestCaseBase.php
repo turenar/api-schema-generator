@@ -28,7 +28,7 @@ abstract class TryValidateTestCaseBase extends TestCase
 		}
 		$test_case = json_decode($test_case_contents, false);
 		$test = $test_case->tests[$test_index];
-		$this->assertObjectHasAttribute('expected', $test);
+		$this->assertTrue(property_exists($test, 'expected'), 'test case must have "expected"');
 		$expected = $this->parseExpectation($test->expected);
 		if (isset($test->input)) {
 			$this->validate($schema['input'], $test->input, $expected);

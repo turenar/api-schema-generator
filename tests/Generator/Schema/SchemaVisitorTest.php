@@ -11,7 +11,7 @@ class SchemaVisitorTest extends TryValidateTestCaseBase
 {
 	const FILES_DIR = __DIR__ . '/files/';
 
-	public function filesProvider()
+	public static function filesProvider()
 	{
 		$files = [];
 		foreach (new \DirectoryIterator(self::FILES_DIR) as $test_spec_dir) {
@@ -34,6 +34,7 @@ class SchemaVisitorTest extends TryValidateTestCaseBase
 	/**
 	 * @dataProvider filesProvider
 	 */
+	#[\PHPUnit\Framework\Attributes\DataProvider('filesProvider')]
 	public function testParse($dir, $test_index)
 	{
 		$generator = new ExposedSpecProcessor();

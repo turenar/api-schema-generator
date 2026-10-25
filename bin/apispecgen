@@ -14,6 +14,11 @@ if (file_exists($file = __DIR__ . '/../../../autoload.php')) {
 use Symfony\Component\Console\Application;
 
 $app = new Application('ApiSpecGen');
-$app->add(new \Turenar\ApiSchema\Command\GenerateCommand());
+$command = new \Turenar\ApiSchema\Command\GenerateCommand();
+if (method_exists($app, 'addCommand')) {
+    $app->addCommand($command); // symfony/console >= 7.4
+} else {
+    $app->add($command);
+}
 $app->setDefaultCommand('gen');
 $app->run();

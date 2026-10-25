@@ -13,7 +13,7 @@ use Turenar\ApiSchema\SpecProcessor;
 
 class GenerateCommand extends Command
 {
-	protected function configure()
+	protected function configure(): void
 	{
 		$this
 			->setName('gen')
@@ -25,7 +25,7 @@ class GenerateCommand extends Command
 			->addOption('incdir', 'I', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'additional include directory');
 	}
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$src = $input->getArgument('src');
 		$dst = $input->getArgument('dst');
